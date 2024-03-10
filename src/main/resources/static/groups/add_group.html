@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student Form</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+           	width:450px;
+           	max-width:100%;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group .btn-submit {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Add Group</h2>
+    <form id="groupForm">
+        <div class="form-group">
+            <label for="title">Group name:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+		
+		<div class="form-group">
+            <button type="button" class="btn-submit" onclick="submitForm()">Add Group</button>
+        </div>
+        <div class="form-group">
+        	<a href="group_list.html">Group list</a>
+        </div>
+        <div class="form-group">
+        	<a href="index.html">To main page</a>
+        </div>
+    </form>
+</div>
+
+<script>
+function submitForm() {
+	let formValid = true;
+	$(".form-reminder").hide();
+   	let group_title = $("#title").val();
+//    	if (group_title.trim() == '') {
+//    		$("#title").after("<div style='margin-top:2px;font-size:13px'>Title should not be empty</div>");
+//    		$("#title").css("border","1px solid red");
+//    		formValid = false;
+//    	}
+   	
+   	if(formValid){
+   		let dt = {title: group_title}
+   		$.ajax({
+   			type: 'POST',
+   		    url: '/api/add-group',
+   		    contentType: "application/json",
+   		    dataType: "json",
+   		    data: JSON.stringify(dt),
+   		    success: function(response) {
+   		    	console.log(response);
+   		    	$(".form-container").prepend("<div class='form-reminder' style='padding:5px;background:lightgreen;'>Group added</div>");
+   		    },
+   		    error: function(error) {
+   		    	let obj = error.responseJSON;
+   		    	console.log(obj);
+   		    	for (var key in obj) {
+					  if (obj.hasOwnProperty(key)) { // Check to ensure the property is not from the prototype
+					    $(".form-container").prepend("<div class='form-reminder' style='padding:5px;background:#f0a5af;color:white;margin-bottom:5px;'>"+obj[key]+"</div>");
+					  }
+				}
+   		    }
+   		});
+   	}
+   	
+   	$('input').val('');
+	
+}
+</script>
+
+</body>
+</html>
