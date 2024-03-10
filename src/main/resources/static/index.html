@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+body {
+	font-family: Arial, sans-seriff;
+	background-color: #f4f4f4;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+#app {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	width: 500px;
+	background:#fff;
+}
+
+.form-group {
+	margin-bottom: 20px;
+}
+
+.form-group label {
+	display: block;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+.form-group input, .form-group select {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.form-group select {
+	cursor: pointer;
+}
+
+.form-group .btn-submit {
+	background-color: #4caf50;
+	color: #fff;
+	padding: 10px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+a {
+	text-decoration: none;
+}
+
+
+ul#studentList {
+	list-style-type: none;
+	padding: 0;
+	margin: 0 auto;
+	max-width: 600px;
+}
+ul#studentList li {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start; /* Align items at the top */
+	padding: 10px;
+	margin-bottom: 5px;
+	background-color: #fff;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+}
+ul#studentList li .studentName {
+	flex-grow: 1;
+	margin-right: 10px; /* Ensures spacing between name and checkbox */
+}
+input[type="checkbox"] {
+	cursor: pointer;
+}
+.highlight {
+	background-color: #e3f2fd; /* Soft blue highlight color */
+}
+.saveButton {
+	background-color: #4CAF50;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	padding: 10px 20px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin-top: 20px;
+	cursor: pointer;
+}
+#datePicker {
+	width: 100%;
+	padding: 10px;
+	margin-bottom: 20px;
+	box-sizing: border-box;
+}
+
+select { padding: 8px; margin-bottom: 20px; width: 200px; }
+.sections { display: flex; gap: 20px; }
+.section { flex: 1; }
+.section h3 { margin-bottom: 10px; }
+.subjects { background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; overflow-y: auto; max-height: 150px; padding: 10px; }
+.subject { margin: 5px 0; padding: 5px; background-color: #fff; border: 1px solid #eee; border-radius: 3px; display: flex; align-items: center; justify-content: space-between; }
+.subject i { cursor: pointer; }
+.fa-times { color: red; }
+.fa-plus { color: green; }
+</style>
+</head>
+<body>
+	<div id="app"></div>
+</body>
+<script>
+$(document).ready(function(){
+	
+	function showMainPage(){
+		$("#app").html("");
+		$("#app").append(`
+			<div id='showRegistrationForm'><a href="#">Register</a></div>
+			<div id='showLoginForm'><a href="#">Login</a></div>
+		`);
+	}
+	
+	function showLoginForm(){
+		$("#app").html("");
+		$("#app").append(`
+			<h2>Login</h2>
+		    <form id="loginForm">
+		        <div class="form-group">
+		            <label for="username">Username:</label>
+		            <input type="text" id="username" name="username" required>
+		        </div>
+				
+		        <div class="form-group">
+	            	<label for="password">Password:</label>
+	            	<input type="password" id="password" name="password" required>
+	        	</div>
+		    </form>
+		    <div class="form-group">
+        		<button type="button" class="btn-submit" id="btn-login">Login</button>
+        	</div>
+        	
+        	<div class="form-group">
+    			<button type="button" id="showRegistrationForm">Register</button>
+    		</div>
+        `);
+	}
+	
+	function showRegistrationForm(){
+		$("#app").html("");
+		$("#app").append(`
+			<h2>Registration</h2>
+		    <form id="registrationForm">
+		        <div class="form-group">
+		            <label for="username">Username:</label>
+		            <input type="text" id="username" name="username" required>
+		        </div>
+		        
+		        <div class="form-group">
+	            	<label for="email">Email:</label>
+	            	<input type="text" id="email" name="email" required>
+	        	</div>
+				
+		        <div class="form-group">
+	            	<label for="password">Password:</label>
+	            	<input type="password" id="password" name="password" required>
+	        	</div>
+	        	
+	        	<div class="form-group">
+	           		<label for="confirmPassword">Confirm password:</label>
+	           		<input type="password" id="confirmPassword" name="confirmPassword" required>
+	       		</div>	
+	       		
+	       		<div class="form-group">
+	            	<button type="button" class="btn-submit" id="btn-registration">Register</button>
+	        	</div>
+	        	
+	        	<div class="form-group">
+            		<div id="showMainPage"><a href="#">To main page</a></div>
+        		</div>
+		    </form>
+		`);
+	}
+	
+	function showAdminPage(){
+		$("#app").html("");
+		$("#app").append(`
+			<div id="add-group">Add group</div>
+			<div id="list-group">Group list</div>
+			<div id="add-subject">Add subject</div>
+			<div id="list-subject">Subject list</div>
+			<div id="add-student">Register subject to student</div>
+			<div id="add-subjectToStudent">Add subject to student</div>
+		`);
+    }
+	
+	function showTeacherPage(){
+		$("#app").html("");
+		$("#app").append(`
+			<h1>Teacher page</h1>
+			<div id="teachers-subjects">My subjects</div>
+		`);
+	}
+	
+	function showSuccessMessage(place,message){
+		$(place).prepend(`
+			<div class="form-reminder" style="padding:2px;background:lightgreen;color:white">${message}</div>
+		`);
+		setTimeout(function(){
+			$(".form-reminder").hide();
+		},1000);
+		
+	}
+	function showErrorMessage(place,obj){
+		for (var key in obj) {
+     		if (obj.hasOwnProperty(key)) { 
+        		$(place).prepend("<div class='form-reminder' style='padding:5px;background:#f0a5af;color:white;margin-bottom:5px;'>"+obj[key]+"</div>");
+        	}
+        }
+	}
+	
+	$(document).on("click",'#showAdminPage',function(){
+		console.log("clicked");
+		showAdminPage();
+	});
+	
+	$(document).on("click",'#showRegistrationForm',function(){
+		showRegistrationForm();
+		
+	});
+	
+	$(document).on("click",'#showLoginForm',function(){
+		showLoginForm();
+	});
+	
+// -- Groups
+	function showAddGroupForm(){
+		$("#app").html("");
+		$("#app").append(`
+			<h2>Add group</h2>
+		    <form id="groupForm">
+		        <div class="form-group">
+		            <label for="title">Group title</label>
+		            <input type="text" id="title" name="title" required>
+		        </div>
+		    	
+		        <div class="form-group">
+	            	<button type="button" class="btn-submit" id="btn-addGroup">Add group</button>
+	        	</div>
+	        	
+	        	<div class="form-group">
+            		<div id="showAdminPage"><a href="#">To main page</a></div>
+        		</div>
+		    </form>
+		`);
+	}
+
+	function showUpdateGroupForm(groupObj){
+		$("#app").html("");
+		$("#app").append(`
+			<h2>Update group</h2>
+		    <form id="groupForm">
+				<input type="hidden" id="id" name="id" value="${groupObj.id}"/>
+		        <div class="form-group">
+		            <label for="title">Group title</label>
+		            <input type="text" id="title" name="title" value="${groupObj.title}" required>
+		        </div>
+		    	
+		        <div class="form-group">
+	            	<button type="button" class="btn-submit" id="btn-updateGroup">Add group</button>
+	        	</div>
+	        	
+	        	<div class="form-group">
+            		<div id="showAdminPage"><a href="#">To main page</a></div>
+        		</div>
+		    </form>
+		`);
+	}
+
+	function showGroupList(data){
+		$("#app").html("");
+		let listitem = "";
+		if(!data){
+			listitem = "Empty list";
+		} else {
+			data.forEach(item=>{
+				listitem += `
+					<div style="display:flex;margin-bottom:10px;" class="list-item">
+						${item.title}
+						<div class="actions" style="margin-left:auto;display:flex;gap:5px;color:white;">
+							<div id="update-group" data-id="${item.id}" style="padding:5px 2px;background:green;">Update</div>
+							<div id="delete-group" data-id="${item.id}" style="padding:5px 2px;background:red;">Delete</div>
+							<div id="list-students" data-id="${item.id}" style="padding:5px 2px;background:lightblue;">View Students</div>
+						</div>
+					</div>
+				`;
+			});
+		}
+		$("#app").append(`
+			<h2>Group list</h2>
+		    ${listitem}
+		`);
+	}
+	
+	$(document).on("click",'#add-group',function(){
+		showAddGroupForm();
+	});
+
+	$(document).on("click",'#list-group',function(){
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/admin/group-list',
+           		contentType: "application/json",
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showGroupList(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+           		  	showErrorMessage("#app",obj);
+           		  return;
+           		 }
+           	});
+       	}
+		showGroupList();
+	});
+	
+	$(document).on("click",'#update-group',function(){
+		let id = $(this).data("id");
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/admin/group/'+id,
+           		contentType: "application/json",
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showUpdateGroupForm(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		   console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+
+					showErrorMessage("#app",obj);
+           		  
+           		
+           		 	return;
+           		 }
+           	});
+       	}
+		showGroupList();
+	});
+	
+	$(document).on("click","#btn-addGroup",function(event) {
+        event.preventDefault();
+        $(".form-reminder").hide();
+       	let title = $("#groupForm #title").val();
+       	let sendData = {
+       		title: title
+       	}
+       	let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'POST',
+           		url: '/api/admin/add-group',
+           		contentType: "application/json",
+           		data: JSON.stringify(sendData),
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+					showSuccessMessage("#groupForm","Sucessfuly added");
+           			$("#groupForm #title").val("");
+           			return;
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           			console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+				
+					showErrorMessage("#groupForm",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+    });
+	
+	$(document).on("click",'#btn-updateGroup',function(event){
+		event.preventDefault();
+        $(".form-reminder").hide();
+		let id = $("#groupForm #id").val();
+       	let title = $("#groupForm #title").val();
+       	let sendData = {
+			id: id,
+       		title: title
+       	}
+       	let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'PUT',
+           		url: '/api/admin/update-group',
+           		contentType: "application/json",
+           		data: JSON.stringify(sendData),
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+					showSuccessMessage("#groupForm","Sucessfuly updated");
+					$("#groupForm #title").val("");
+           			return;
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			let status = error.status;
+					if (status==401){
+						showMainPage();
+						return;
+					}
+					let obj = error.responseJSON;
+					console.log("AJAX request error");
+					console.log("Status: ", error.status);
+					console.log("Status Text: ", error.statusText);
+					console.log("Response Text: ", error.responseText);
+					showErrorMessage("#groupForm",obj);
+					return;
+           		 }
+           	});
+       	}
+	})
+
+	$(document).on("click","#delete-group",function(){
+		event.preventDefault();
+        $(".form-reminder").hide();
+		if (confirm('Are you sure you want to delete group?')) {
+			let parent = $(this).closest(".list-item");
+			let id = $(this).data("id");
+			let token = localStorage.getItem('jwt_token');
+			$.ajax({
+				type: 'DELETE',
+				url: '/api/admin/delete-group/'+id,
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+				},
+				success: function(response) {
+					console.log("ok ",response);
+					parent.hide();
+					showSuccessMessage("#app","Sucessfuly deleted");
+					return;
+				},
+				error: function(error) {
+					console.log("error ",error);
+					
+					let status = error.status;
+					if (status==401){
+						showMainPage();
+						return;
+					}
+					let obj = error.responseJSON;
+					console.log("AJAX request error");
+					console.log("Status: ", error.status);
+					console.log("Status Text: ", error.statusText);
+					console.log("Response Text: ", error.responseText);
+
+					showErrorMessage("#app",obj);
+					return;
+				}
+			});
+		}
+	});
+// -- Groups
+
+
+// -- Subjects
+	function showAddSubjectForm(teachers){
+		let teachersTpl = "";
+		teachers.forEach(teacher=>{
+			teachersTpl += `
+				<option value="${teacher.id}">${teacher.firstname} ${teacher.lastname}</option>
+			`;
+		})
+
+		$("#app").html("");
+		$("#app").append(`
+			<h2>Add subject</h2>
+		    <form id="subjectForm">
+		        <div class="form-group">
+		            <label for="title">Subject title</label>
+		            <input type="text" id="title" name="title" required>
+		        </div>
+
+				<div class="form-group">
+					<label for="teacher">Teacher:</label>
+					<select id="teacher" name="teacher" required>
+						${teachersTpl}
+					</select>
+        		</div>
+		    	
+		        <div class="form-group">
+	            	<button type="button" class="btn-submit" id="btn-addSubject">Add Subject</button>
+	        	</div>
+	        	
+	        	<div class="form-group">
+            		<div id="showAdminPage"><a href="#">To main page</a></div>
+        		</div>
+		    </form>
+		`);
+	}
+	
+	function showUpdateSubjectForm(response){
+		let teachersTpl = "";
+		response.teachersList.forEach(teacher=>{
+			let selected = teacher.id == response.subject.teacher ? " selected" : "";
+			teachersTpl += `
+				<option value="${teacher.id}" ${selected}>${teacher.firstname} ${teacher.lastname}</option>
+			`;
+		})
+
+		$("#app").html("");
+		$("#app").append(`
+			<h2>Update subject</h2>
+		    <form id="subjectForm">
+				<input type="hidden" id="id" name="id" value="${response.subject.id}">
+		        <div class="form-group">
+		            <label for="title">Subject title</label>
+		            <input type="text" id="title" name="title" value="${response.subject.title}" required>
+		        </div>
+
+				<div class="form-group">
+					<label for="teacher">Teacher:</label>
+					<select id="teacher" name="teacher" required>
+						${teachersTpl}
+					</select>
+        		</div>
+		    	
+		        <div class="form-group">
+	            	<button type="button" class="btn-submit" id="btn-udpateSubject">Update Subject</button>
+	        	</div>
+	        	
+	        	<div class="form-group">
+            		<div id="showAdminPage"><a href="#">To main page</a></div>
+        		</div>
+		    </form>
+		`);
+	}
+	
+	function showSubjectList(data){
+		$("#app").html("");
+		let listitem = "";
+
+		if(!data){
+			listitem = "Empty list";
+		} else {
+			data.forEach(item=>{
+			listitem += `
+				<div style="display:flex;margin-bottom:10px;" class="list-item">
+					${item.title}
+					<div class="actions" style="margin-left:auto;display:flex;gap:5px;color:white;">
+						<div id="update-subject" data-id="${item.id}" style="padding:5px 2px;background:green;">Update</div>
+						<div id="delete-subject" data-id="${item.id}" style="padding:5px 2px;background:red;">Delete</div>
+					</div>
+				</div>
+			`;
+			})
+		}
+		$("#app").append(`
+			<h2>Subject list</h2>
+		    ${listitem}
+		`);
+	}
+
+	function showSubjectListTeacher(data){
+		$("#app").html("");
+		let listitem = "";
+
+		if(!data){
+			listitem = "Empty list";
+		} else {
+			data.forEach(item=>{
+			listitem += `
+				<div style="display:flex;margin-bottom:10px;" class="list-item">
+					${item.title}
+					<div class="actions" style="margin-left:auto;display:flex;gap:5px;color:white;">
+						<div id="list-assignments" data-id="${item.id}" style="padding:5px 2px;background:green;">Assignments</div>
+						<div id="subject-students" data-id="${item.id}" style="padding:5px 2px;background:green;">Students</div>
+						<div id="subject-attendance" data-id="${item.id}" style="padding:5px 2px;background:red;">Attendance</div>
+					</div>
+				</div>
+			`;
+			})
+		}
+		$("#app").append(`
+			<h2>Subject list</h2>
+		    ${listitem}
+		`);
+	}
+
+	$(document).on("click",'#add-subject',function(){
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/admin/showAddSubjectForm',
+        		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showAddSubjectForm(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+
+					showErrorMessage("#app",obj)
+           		  	return;
+           		 }
+           	});
+       	}
+		
+	});
+
+	$(document).on("click",'#list-subject',function(){
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/admin/subject-list',
+           		contentType: "application/json",
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showSubjectList(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+           		  
+					showErrorMessage("#app",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+		
+	});
+
+	$(document).on("click",'#teachers-subjects',function(){
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/teacher/teachers-subjects',
+           		contentType: "application/json",
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showSubjectListTeacher(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+           		  
+					showErrorMessage("#app",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}	
+	});
+	
+	$(document).on("click",'#update-subject',function(){
+		let id = $(this).data("id");
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/admin/subject/'+id,
+           		contentType: "application/json",
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok us",response);
+           			showUpdateSubjectForm(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+
+					showErrorMessage("#app",obj);
+           		  
+           		
+           		 	return;
+           		 }
+           	});
+       	}
+		
+	});
+
+	$(document).on("click",'#btn-addSubject',function(){
+		let title = $("#subjectForm #title").val();
+		let teacher = $("#subjectForm #teacher").val();
+
+		let dataToSend = {
+			title:title,
+			teacher:teacher
+		}
+		console.log(dataToSend);
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'POST',
+           		url: '/api/admin/add-subject',
+           		contentType: "application/json",
+				data: JSON.stringify(dataToSend),
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showSuccessMessage("#subjectForm","Subject successfully added");
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+				  
+					showErrorMessage("#subjectForm",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+		showAddSubjectForm();
+	});
+
+	$(document).on("click",'#btn-udpateSubject',function(event){
+		event.preventDefault();
+        $(".form-reminder").hide();
+		let id = $("#subjectForm #id").val();
+       	let title = $("#subjectForm #title").val();
+		let teacher = $("#subjectForm #teacher").val();
+       	let sendData = {
+			id: id,
+       		title: title,
+			teacher:teacher
+       	}
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'PUT',
+           		url: '/api/admin/update-subject',
+           		contentType: "application/json",
+           		data: JSON.stringify(sendData),
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+					showSuccessMessage("#subjectForm","Sucessfuly updated");
+					return;
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           			console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+				  
+					showErrorMessage("#subjectForm",obj);
+					return;
+           		 }
+           	});
+       	}
+	})
+	
+	$(document).on("click","#delete-subject",function(){
+		console.log("worked");
+		event.preventDefault();
+        $(".form-reminder").hide();
+		if (confirm('Are you sure you want to send to delete subject?')) {
+			let parent = $(this).closest(".list-item");
+			let id = $(this).data("id");
+			let token = localStorage.getItem('jwt_token');
+			$.ajax({
+				type: 'DELETE',
+				url: '/api/admin/delete-subject/'+id,
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+				},
+				success: function(response) {
+					console.log("ok ",response);
+					parent.hide();
+					showSuccessMessage("#app","Sucessfuly deleted");
+					return;
+				},
+				error: function(error) {
+					console.log("error ",error);
+					
+					let status = error.status;
+					if (status==401){
+						showMainPage();
+						return;
+					}
+					let obj = error.responseJSON;
+					console.log("AJAX request error");
+					console.log("Status: ", error.status);
+					console.log("Status Text: ", error.statusText);
+					console.log("Response Text: ", error.responseText);
+
+					showErrorMessage("#app",obj);
+					return;
+					}
+			});
+		}
+		
+	});
+	// -- Subjects
+
+	// -- Students
+	function showAddStudentForm(groups){
+		let groupsTpl = "";
+		groups.forEach(group=>{
+			groupsTpl += `
+				<option value="${group.id}">${group.title}</option>
+			`;
+		})
+
+		$("#app").html("");
+		$("#app").append(`
+			<h2>Add student</h2>
+		    <form id="studentForm">
+		        <div class="form-group">
+		            <label for="firstname">Student firstname</label>
+		            <input type="text" id="firstname" name="firstname" required>
+		        </div>
+
+				<div class="form-group">
+		            <label for="lastname">Student lastname</label>
+		            <input type="text" id="lastname" name="lastname" required>
+		        </div>
+
+				<div class="form-group">
+					<label for="group">Group:</label>
+					<select id="group" name="group" required>
+						${groupsTpl}
+					</select>
+        		</div>
+		    	
+		        <div class="form-group">
+	            	<button type="button" class="btn-submit" id="btn-addStudent">Add Subject</button>
+	        	</div>
+	        	
+	        	<div class="form-group">
+            		<div id="showAdminPage"><a href="#">To main page</a></div>
+        		</div>
+		    </form>
+		`);
+	}
+	
+	function showUpdateStudentForm(response){
+		let groupsTpl = "";
+		response.groupsList.forEach(group=>{
+			let selected = group.id == response.student.group ? " selected" : "";
+			groupsTpl += `
+				<option value="${group.id}" ${selected}>${group.title}</option>
+			`;
+		})
+
+		$("#app").html("");
+		$("#app").append(`
+			<h2>Update student</h2>
+		    <form id="studentForm">
+				<input type="hidden" id="id" name="id" value="${response.student.id}">
+		        <div class="form-group">
+		            <label for="firstname">Student firstname</label>
+		            <input type="text" id="firstname" name="firstname" value="${response.student.firstname}" required>
+		        </div>
+
+				<div class="form-group">
+		            <label for="lastname">Student lastname</label>
+		            <input type="text" id="lastname" name="lastname" value="${response.student.lastname}" required>
+		        </div>
+
+				<div class="form-group">
+					<label for="group">Group:</label>
+					<select id="group" name="group" required>
+						${groupsTpl}
+					</select>
+        		</div>
+		    	
+		        <div class="form-group">
+	            	<button type="button" class="btn-submit" id="btn-udpateStudent">Update Student</button>
+	        	</div>
+	        	
+	        	<div class="form-group">
+            		<div id="showAdminPage"><a href="#">To main page</a></div>
+        		</div>
+		    </form>
+		`);
+	}
+	
+	function showStudentsList(data){
+		$("#app").html("");
+		let listitem = "";
+
+		if(!data){
+			listitem = "Empty list";
+		} else {
+			data.forEach(item=>{
+			listitem += `
+				<div style="display:flex;margin-bottom:10px;" class="list-item">
+					${item.firstname} ${item.lastname}
+					<div class="actions" style="margin-left:auto;display:flex;gap:5px;color:white;">
+						<div id="update-student" data-id="${item.id}" style="padding:5px 2px;background:green;">Update</div>
+						<div id="delete-student" data-id="${item.id}" style="padding:5px 2px;background:red;">Delete</div>
+					</div>
+				</div>
+			`;
+			})
+		}
+		$("#app").append(`
+			<h2>Student list list</h2>
+		    ${listitem}
+		`);
+	}
+
+	$(document).on("click",'#add-student',function(){
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/admin/showAddStudentForm',
+        		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showAddStudentForm(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+
+					showErrorMessage("#app",obj)
+           		  	return;
+           		 }
+           	});
+       	}
+		
+	});
+
+	$(document).on("click",'#list-students',function(){
+		let token = localStorage.getItem('jwt_token');
+		let id = $(this).data("id");
+		if(token){
+			
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/admin/student-list/'+id,
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showStudentsList(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+           		  
+					showErrorMessage("#app",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+		
+	});
+
+	$(document).on("click",'#update-student',function(){
+		let id = $(this).data("id");
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/admin/showUpdateStudentForm/'+id,
+           		contentType: "application/json",
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok us",response);
+           			showUpdateStudentForm(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+
+					showErrorMessage("#app",obj);
+           		  
+           		
+           		 	return;
+           		 }
+           	});
+       	}
+		
+	});
+
+	$(document).on("click",'#btn-addStudent',function(){
+		let firstname = $("#studentForm #firstname").val();
+		let lastname = $("#studentForm #lastname").val();
+		let group = $("#studentForm #group").val();
+
+		let dataToSend = {
+			firstname:firstname,
+			lastname:lastname,
+			group:group
+		}
+		
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'POST',
+           		url: '/api/admin/add-student',
+           		contentType: "application/json",
+				data: JSON.stringify(dataToSend),
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showSuccessMessage("#studentForm","Student successfully added");
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  	console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+				  
+					showErrorMessage("#studentForm",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+		showAddSubjectForm();
+	});
+
+	$(document).on("click",'#btn-udpateStudent',function(event){
+		event.preventDefault();
+        $(".form-reminder").hide();
+		let id = $("#studentForm #id").val();
+		let firstname = $("#studentForm #firstname").val();
+		let lastname = $("#studentForm #lastname").val();
+		let group = $("#studentForm #group").val();
+		let dataToSend = {
+			id:id,
+			firstname:firstname,
+			lastname:lastname,
+			group:group
+		}
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'PUT',
+           		url: '/api/admin/update-student',
+           		contentType: "application/json",
+           		data: JSON.stringify(dataToSend),
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+					showSuccessMessage("#studentForm","Sucessfuly updated");
+					return;
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           			console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+				  
+					showErrorMessage("#subjectForm",obj);
+					return;
+           		 }
+           	});
+       	}
+	})
+	
+	$(document).on("click","#delete-student",function(){
+		event.preventDefault();
+        $(".form-reminder").hide();
+		if (confirm('Are you sure you want to send to delete student?')) {
+			let parent = $(this).closest(".list-item");
+			let id = $(this).data("id");
+			let token = localStorage.getItem('jwt_token');
+			$.ajax({
+				type: 'DELETE',
+				url: '/api/admin/delete-student/'+id,
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+				},
+				success: function(response) {
+					console.log("ok ",response);
+					parent.hide();
+					showSuccessMessage("#app","Sucessfuly deleted");
+					return;
+				},
+				error: function(error) {
+					console.log("error ",error);
+					
+					let status = error.status;
+					if (status==401){
+						showMainPage();
+						return;
+					}
+					let obj = error.responseJSON;
+					console.log("AJAX request error");
+					console.log("Status: ", error.status);
+					console.log("Status Text: ", error.statusText);
+					console.log("Response Text: ", error.responseText);
+
+					showErrorMessage("#app",obj);
+					return;
+					}
+			});
+		}
+		
+	});
+	// -- Students
+
+	// -- Assignments
+	function showAddAssignmentForm(subject_id){
+		let subjectsTpl = "";
+		$("#app").html("");
+		$("#app").append(`
+		<h2>Add assignment</h2>
+		<form id="assignmentForm">
+			<input type="hidden" id="subject_id" name="subject_id" value="${subject_id}">
+			<div class="form-group">
+				<label for="title">Assignment title:</label>
+				<input type="text" id="title" name="title" required>
+			</div>
+			
+			<div class="form-group">
+				<button type="button" class="btn-submit" id="btn-addAssignment">Add Assignment</button>
+			</div>
+			
+			<div class="form-group">
+				<div id="showAdminPage"><a href="#">To main page</a></div>
+			</div>
+		</form>
+		`);
+	}
+	
+	function showUpdateAssignmentForm(response){
+		$("#app").html("");
+		$("#app").append(`
+			<h2>Update assignment</h2>
+		    <form id="assignmentForm">
+				<input type="hidden" id="id" name="id" value="${response.id}">
+				<input type="hidden" id="subject" name="subject" value="${response.subject}">
+		        <div class="form-group">
+		            <label for="title">Assignment title:</label>
+		            <input type="text" id="title" name="title" value="${response.title}" required>
+		        </div>
+				
+				<div class="form-group">
+	            	<button type="button" class="btn-submit" id="btn-udpateAssignment">Update Assignment</button>
+	        	</div>
+	        	
+	        	<div class="form-group">
+            		<div id="showAdminPage"><a href="#">To main page</a></div>
+        		</div>
+		    </form>
+		`);
+	}
+	
+	function showAssignmentList(subject_id,data){
+		$("#app").html("");
+		let listitem = "";
+
+		if(!data){
+			listitem = "Empty list";
+		} else {
+			data.forEach(item=>{
+			listitem += `
+				<div style="display:flex;margin-bottom:10px;" class="list-item">
+					${item.title}
+					<div class="actions" style="margin-left:auto;display:flex;gap:5px;color:white;">
+						<div id="points" data-id="${item.id}" style="padding:5px 2px;background:green;">Put points</div>
+						<div id="update-assignment" data-id="${item.id}" style="padding:5px 2px;background:green;">Update</div>
+						<div id="delete-assignment" data-id="${item.id}" style="padding:5px 2px;background:red;">Delete</div>
+					</div>
+				</div>
+			`;
+			})
+		}
+		$("#app").append(`
+			<h2>Assignment list</h2>
+		    ${listitem}
+			<button data-id="${subject_id}" id="add-assignment" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; box-shadow: 0 2px 4px rgba(0, 123, 255, 0.5);">Add assignment</button>
+			`);
+	}
+
+	$(document).on("click",'#add-assignment',function(){
+		let subject_id = $(this).data("id");
+		console.log(subject_id);
+		showAddAssignmentForm(subject_id);
+	});
+
+	$(document).on("click",'#list-assignments',function(){
+		let token = localStorage.getItem('jwt_token');
+		let subject_id = $(this).data("id");
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/teacher/assignment-list/'+subject_id,
+           		contentType: "application/json",
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showAssignmentList(subject_id,response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+           		  
+					showErrorMessage("#app",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+	});
+
+	$(document).on("click","#points",function(){
+		let token = localStorage.getItem('jwt_token');
+		let assignment_id = $(this).data("id");
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/teacher/getPointsList/'+assignment_id,
+           		contentType: "application/json",
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showAssignmentPointsList(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+           		  
+					showErrorMessage("#app",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+	})
+
+	$(document).on("click",'#update-assignment',function(){
+		let subject_id = $(this).data("id");
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/teacher/assignment/'+subject_id,
+           		contentType: "application/json",
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok us",response);
+           			showUpdateAssignmentForm(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+
+					showErrorMessage("#app",obj);
+           		  
+           		
+           		 	return;
+           		 }
+           	});
+       	}
+		
+	});
+
+	$(document).on("click",'#btn-addAssignment',function(){
+		let subject_id = $("#assignmentForm #subject_id").val();
+		let title = $("#assignmentForm #title").val();
+		
+		let dataToSend = {
+			title:title,
+			subject:subject_id
+		}
+		console.log(dataToSend);
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'POST',
+           		url: '/api/teacher/add-assignment',
+           		contentType: "application/json",
+				data: JSON.stringify(dataToSend),
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showSuccessMessage("#assignmentForm","Subject successfully added");
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+				  
+					showErrorMessage("#subjectForm",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+		showAddSubjectForm();
+	});
+
+	$(document).on("click",'#btn-udpateAssignment',function(event){
+		event.preventDefault();
+        $(".form-reminder").hide();
+		let id = $("#assignmentForm #id").val();
+       	let title = $("#assignmentForm #title").val();
+		let subject = $("#assignmentForm #subject").val();
+       	let sendData = {
+			id: id,
+       		title: title,
+			subject:subject,
+		}
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'PUT',
+           		url: '/api/teacher/update-assignment',
+           		contentType: "application/json",
+           		data: JSON.stringify(sendData),
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+					showSuccessMessage("#subjectForm","Sucessfuly updated");
+					return;
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           			console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+				  
+					showErrorMessage("#subjectForm",obj);
+					return;
+           		 }
+           	});
+       	}
+	})
+	
+	$(document).on("click","#delete-assignment",function(){
+		event.preventDefault();
+        $(".form-reminder").hide();
+		if (confirm('Are you sure you want to send to delete assignment?')) {
+			let parent = $(this).closest(".list-item");
+			let subject_id = $(this).data("id");
+			let token = localStorage.getItem('jwt_token');
+			$.ajax({
+				type: 'DELETE',
+				url: '/api/teacher/delete-assignment/'+subject_id,
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+				},
+				success: function(response) {
+					console.log("ok ",response);
+					parent.hide();
+					showSuccessMessage("#app","Sucessfuly deleted");
+					return;
+				},
+				error: function(error) {
+					console.log("error ",error);
+					
+					let status = error.status;
+					if (status==401){
+						showMainPage();
+						return;
+					}
+					let obj = error.responseJSON;
+					console.log("AJAX request error");
+					console.log("Status: ", error.status);
+					console.log("Status Text: ", error.statusText);
+					console.log("Response Text: ", error.responseText);
+
+					showErrorMessage("#app",obj);
+					return;
+					}
+			});
+		}
+	})
+	
+	// -- Assignments
+	function showAssignmentPointsList(responseObj){
+		const {assignmentId, assignmentTitle,pointsAssignmentList} = responseObj;
+		let pointsItemTpl="";
+		pointsAssignmentList.forEach(assignment=>{
+			pointsItemTpl+=`
+				<div class="points-item" data-studentId="${assignment.student}">
+					<span class="name">${assignment.studentFirstname} ${assignment.studentLastname}</span>
+					<input type="number" class="score-input" placeholder="Enter score" value=${assignment.points}>
+					<button class="save-btn">Save</button>
+				</div>
+			`;
+		})
+		$("#app").html("");
+		$("#app").append(`
+		<div id="pointsList" data-assignmentId=${assignmentId}>
+			<h2>${assignmentTitle}</h2>
+			${pointsItemTpl}
+		</div>
+		`);
+	}
+
+	$(document).on("click",".save-btn",function(){
+		let assignment_id = $("#pointsList").data("assignmentid");
+		let student_id = $(this).parent().data("studentid");
+		let points = $(this).parent().find(".score-input").val();
+		let dataToSend = {
+			student:student_id,
+			subjectAssignment:assignment_id,
+			points:points
+		}
+		console.log(dataToSend);
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'POST',
+           		url: '/api/teacher/addPointsToAssignment',
+           		contentType: "application/json",
+           		data: JSON.stringify(dataToSend),
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok us",response);
+           			
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+
+					showErrorMessage("#app",obj);
+           		  
+           		
+           		 	return;
+           		 }
+           	});
+       	}
+		//console.log($("#pointsList").data("assignmentid"));
+	})
+
+
+
+	// -- StudentSubject
+	function showAddSubjectToStudentsForm(){
+		$("#app").html("");
+		
+		$("#app").append(`
+			<select id="studentDropdown">
+				<option value="">Select Student</option>
+			</select>
+
+			<div class="sections">
+				<div class="section">
+					<h3>Selected Subjects</h3>
+					<div id="selectedSubjects" class="subjects">
+						
+					</div>
+				</div>
+				<div class="section">
+					<h3>Available Subjects</h3>
+					<div id="availableSubjects" class="subjects">
+						
+					</div>
+				</div>
+			</div>
+		`);
+		
+		
+	}
+
+	function populateStudentsDropdown(studentList){
+		let studentListTpl = "";
+		studentList.forEach(student=>{
+			studentListTpl += `<option value="${student.id}">${student.firstname} ${student.lastname}</option>`;
+		})
+		$("#studentDropdown").append(studentListTpl);
+	}
+
+	function populateSubjectsDropdown(studentId, studentsSubjects, availableSubjects){
+		$('.sections').attr('data-studentId', studentId);
+		studentsSubjects.forEach(subject => {
+			$('#selectedSubjects').append(`<div class="subject" data-id="${subject.id}">${subject.title} <i id="add-subjectToStList" class="fas fa-times"></i></div>`);
+		});
+		availableSubjects.forEach(subject => {
+			$('#availableSubjects').append(`<div class="subject" data-id="${subject.id}">${subject.title} <i id="add-subjectToStList" class="fas fa-plus"></i></div>`);
+		});
+	}
+
+	$(document).on('click', '.fa-plus', function() {
+		const studentId = $(".sections").data("studentid");
+		const subjectId = $(this).parent().data("id");
+		const htmlElem = $(this).parent();
+		let dataToSend = {
+			student: studentId,
+			subject: subjectId
+		}
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'POST',
+           		url: '/api/admin/addSubjectToStudent',
+           		contentType: "application/json",
+				data: JSON.stringify(dataToSend),
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+					   htmlElem.find("i").removeClass("fa-plus").addClass("fa-times");
+					$('#selectedSubjects').append(htmlElem);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+					console.log("Status: ", error.status);
+					console.log("Status Text: ", error.statusText);
+					console.log("Response Text: ", error.responseText);
+				  
+					showErrorMessage("#app",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+			//$(this).parent().remove();
+			//$('#selectedSubjects').append(`<div class="subject" data-id="${subject.id}">${subjectName} <i id="remove-subjectFromStList" class="fas fa-times"></i></div>`);
+		});
+	
+	$(document).on('click', '.fa-times', function() {
+		const studentId = $(".sections").data("studentid");
+		const subjectId = $(this).parent().data("id");
+		const htmlElem = $(this).parent();
+		let dataToSend = {
+			student: studentId,
+			subject: subjectId
+		}
+		let token = localStorage.getItem('jwt_token');
+		if(token){
+			$.ajax({
+				type: 'DELETE',
+				url: '/api/admin/removeSubjectFromStudent',
+				contentType: "application/json",
+				data: JSON.stringify(dataToSend),
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+				},
+				success: function(response) {
+					console.log("ok ",response);
+					htmlElem.find("i").removeClass("fa-times").addClass("fa-plus");
+					$('#availableSubjects').append(htmlElem);
+					
+				},
+				error: function(error) {
+					console.log("error ",error);
+					let status = error.status;
+					if (status==401){
+						showMainPage();
+						console.log("Login again");
+						return;
+					}
+					let obj = error.responseJSON;
+					console.log("AJAX request error");
+					console.log("Status: ", error.status);
+					console.log("Status Text: ", error.statusText);
+					console.log("Response Text: ", error.responseText);
+					
+					showErrorMessage("#app",obj);
+					
+					return;
+					}
+			});
+		}
+		//$(this).parent().remove();
+		//$('#selectedSubjects').append(`<div class="subject" data-id="${subject.id}">${subjectName} <i id="remove-subjectFromStList" class="fas fa-times"></i></div>`);
+	});
+	$('#selectedSubjects').on('click', '#remove-subjectFromStList', function() {
+		const subjectName = $(this).parent().text().trim();
+		$(this).parent().remove();
+		$('#availableSubjects').append(`<div class="subject">${subjectName} <i class="fas fa-plus"></i></div>`);
+	});
+	
+	$(document).on("change","#studentDropdown",function() {
+		$('#availableSubjects,#selectedSubjects').html("");
+        const studentId = $(this).val();
+		console.log("sdaf");
+        let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/admin/getStudentsSubjects/'+studentId,
+           		contentType: "application/json",
+				dataType: "json",
+				beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			populateSubjectsDropdown(response.student,response.studentsSubject,response.subjectsToRegister);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+				  
+					showErrorMessage("#app",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+    });
+	
+	$(document).on("click",'#add-subjectToStudent',function(event){
+		showAddSubjectToStudentsForm();
+		let token = localStorage.getItem('jwt_token');
+		console.log('clicked');
+		let id = $(this).data("id");
+		if(token){
+			$.ajax({
+           		type: 'GET',
+           		url: '/api/admin/student-list',
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			populateStudentsDropdown(response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+           		  
+					showErrorMessage("#app",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+	})
+	// -- StudentSubject
+
+	// -- Attendance
+	function showAttendance(subject_id,selectedDate="",attendanceList=[]){
+		let attendanceTpl = "";
+		attendanceList.forEach(attendance=>{
+			let checked = attendance.attended ? "checked" : "";
+			attendanceTpl +=`
+				<li class="student-item" data-studentid='${attendance.studentId}'>
+					<span>${attendance.firstName} ${attendance.lastName}</span>
+					<input type="checkbox" class="attendance-checkbox" ${checked}>
+				</li>
+			`;
+		})
+		$("#app").html("");
+		$("#app").append(`
+		<div class="container" data-subjectId=${subject_id}>
+			<h2>Attendance Tracker</h2>
+			<div class="date-selection">
+				<label for="date">Select Date:</label>
+				<input type="date" id="date" value=${selectedDate}>
+			</div>
+		
+			<ul id="studentList">
+				${attendanceTpl}
+			</ul>
+		</div>
+		`);
+		
+	}
+
+	$(document).on("change","#date", function(){
+		let subject_id = $(".container").data("subjectid");
+		let selectedDate = $(this).val();
+        let token = localStorage.getItem('jwt_token');
+		if(token){
+       		$.ajax({
+           		type: 'GET',
+           		url: '/api/teacher/getAttendanceList/'+subject_id+'/'+selectedDate,
+           		contentType: "application/json",
+           		dataType: "json",
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showAttendance(subject_id,selectedDate,response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+           		  
+					showErrorMessage("#app",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+	})
+	
+	$(document).on("click",".attendance-checkbox",function(){
+		let date = $("#date").val();
+		let student = $(this).parent().data("studentid");
+		let subject = $(".container").data("subjectid");
+		let attended = this.checked ? true : false;
+		let token = localStorage.getItem('jwt_token');
+		let dataToSend = {
+			student:student,
+			subject:subject,
+			date:date,
+			attended:attended
+
+		}
+		if(token){
+       		$.ajax({
+           		type: 'POST',
+           		url: '/api/teacher/attendance',
+           		contentType: "application/json",
+				dataType: "json",
+				data: JSON.stringify(dataToSend),
+           		beforeSend: function(xhr) {
+                   xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                },
+           		success: function(response) {
+           			console.log("ok ",response);
+           			showAttendance(subject,date,response);
+           		},
+           		error: function(error) {
+           			console.log("error ",error);
+           			
+           		  let status = error.status;
+           		  if (status==401){
+           			  showMainPage();
+           			  console.log("Login again");
+           			  return;
+           		  }
+           		  let obj = error.responseJSON;
+           		  console.log("AJAX request error");
+           	    	console.log("Status: ", error.status);
+           	    	console.log("Status Text: ", error.statusText);
+           	    	console.log("Response Text: ", error.responseText);
+				  
+					showErrorMessage("#app",obj);
+           		  
+           		 	return;
+           		 }
+           	});
+       	}
+
+
+	})
+
+	$(document).on("click","#subject-attendance",function(){
+		let subject_id = $(this).data("id");
+		showAttendance(subject_id);
+		console.log("cliecked");
+	})
+	// -- Attendance
+	
+	function checkAuth(){
+		if(!localStorage.getItem("jwt_token")){
+			showMainPage();
+			return;
+		} else {
+			if(localStorage.getItem("ROLE_NAME")=="ROLE_ADMIN"){
+   				showAdminPage();
+				return;
+   			} else if((localStorage.getItem("ROLE_NAME")=="ROLE_TEACHER")) {
+   				showTeacherPage();
+				return;
+   			}else {
+				showLoginForm();
+			} 
+
+		}
+	}
+	
+	$(document).on("click","#btn-login",function() {
+        let formValid = true;
+    	$(".form-reminder").hide();
+    	
+    	let username = $("#loginForm #username").val();
+       	let password = $("#loginForm #password").val();
+       	
+       	let sendData = {
+       		username: username,
+       		password: password
+       	}
+       	console.log(sendData);
+       	$.ajax({
+       		type: 'POST',
+       		url: '/api/login',
+       		contentType: "application/json",
+       		dataType: "json",
+       		data: JSON.stringify(sendData),
+       		success: function(response) {
+       			console.log(response);
+       			localStorage.setItem("jwt_token",response.token);
+       			localStorage.setItem("ROLE_NAME",response.roleName);
+       			if(response.roleName=="ROLE_ADMIN"){
+       				showAdminPage();
+       			} else if(response.roleName=="ROLE_TEACHER") {
+       				showTeacherPage();
+       			}
+       		},
+       		error: function(error) {
+       		  let obj = error.responseJSON;
+			  showErrorMessage("#loginForm",obj);
+       		}
+       	});
+   	});
+	
+	$(document).on("click","#btn-registration",function(event) {
+        event.preventDefault();
+        $(".form-reminder").hide();
+       	let username = $("#registrationForm #username").val();
+       	let password = $("#registrationForm #password").val();
+       	let confirmPassword = $("#registrationForm #confirmPassword").val();
+       	let email = $("#registrationForm #email").val();
+       	
+       	let sendData = {
+       		username: username,
+       		password: password,
+       		confirmPassword : confirmPassword,
+       		email: email
+       	}
+       	$.ajax({
+       		type: 'POST',
+       		url: '/api/registration',
+       		contentType: "application/json",
+       		dataType: "json",
+       		data: JSON.stringify(sendData),
+       		success: function(response) {
+       			console.log(response);
+       			showMainPage();
+       		},
+       		error: function(error) {
+       		  let obj = error.responseJSON;
+       		  console.log(obj);
+				showErrorMessage("#loginForm",obj);
+       		}
+       	});
+      });
+	checkAuth();
+});
+</script>
+
+</html>
