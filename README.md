@@ -17,6 +17,6 @@ Teachers can:
 - Spring Data Jpa
 - Spring Validaion Api
 - Jquery on frontend
-- Role based authentication using JWT token
+- Sprint secutiry role based authentication using JWT token
 
 
