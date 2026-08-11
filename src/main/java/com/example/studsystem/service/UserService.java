@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,12 +19,18 @@ import com.example.studsystem.repo.UserRepository;
 
 @Service
 public class UserService implements UserDetailsService {
-	@Autowired
-    private UserRepository userRepository;
-	@Autowired
-    private RoleService roleService;
-	@Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(
+            UserRepository userRepository,
+            RoleService roleService,
+            PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
+    }
 	
 	public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);

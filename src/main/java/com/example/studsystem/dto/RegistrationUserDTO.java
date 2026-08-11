@@ -40,11 +40,4 @@ public class RegistrationUserDTO {
 		this.email = email;
 	}
 
-	@Override
-	public String toString() {
-		return "RegistrationUserDTO [username=" + username + ", password=" + password + ", confirmPassword="
-				+ confirmPassword + ", email=" + email + "]";
-	}
-    
-    
 }

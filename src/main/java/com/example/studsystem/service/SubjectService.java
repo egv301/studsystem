@@ -2,11 +2,8 @@ package com.example.studsystem.service;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.studsystem.dto.SubjectDTO;
@@ -19,10 +16,13 @@ import com.example.studsystem.repo.SubjectRepository;
 
 @Service
 public class SubjectService{
-	@Autowired
-	SubjectRepository subjectRepository;
-	@Autowired
-	UserService userService;
+    private final SubjectRepository subjectRepository;
+    private final UserService userService;
+
+    public SubjectService(SubjectRepository subjectRepository, UserService userService) {
+        this.subjectRepository = subjectRepository;
+        this.userService = userService;
+    }
 	
 	public void addSubject(SubjectDTO subjectObj) throws NotFoundException{
 		User teacher = userService.findUserById(subjectObj.getTeacher()).orElseThrow(()->new NotFoundException("Teacher not found"));
@@ -51,6 +51,13 @@ public class SubjectService{
     public List<Subject> getSubjectList(){
     	return subjectRepository.findAll();
     }
+
+    public List<SubjectDTO> getSubjectListDTO(){
+        return subjectRepository.findAll()
+                .stream()
+                .map(subject -> new SubjectDTO(subject.getId(), subject.getTitle(), subject.getTeacher().getId()))
+                .collect(Collectors.toList());
+    }
     
     public List<SubjectDTO> getTeachersSubjects(Principal principal){
     	User teacher = userService.findByUsername(principal.getName()).get();
@@ -68,13 +75,12 @@ public class SubjectService{
     	User teacher = userService.findUserById(subjectObj.getTeacher()).orElseThrow(()->new NotFoundException("Teacher not found"));
     	subject.setTitle(subjectObj.getTitle());
     	subject.setTeacher(teacher);
-    	System.out.println("teacher" + teacher);
     	subjectRepository.save(subject);
     	return subject;
     }
     
     public void deleteSubject(Long subject_id) throws NotFoundException {
-    	Subject subject = subjectRepository.findById(subject_id).orElseThrow(()->new NotFoundException("Subject not found"));
+        subjectRepository.findById(subject_id).orElseThrow(()->new NotFoundException("Subject not found"));
     	subjectRepository.deleteById(subject_id);
     }
 }

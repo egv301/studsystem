@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.studsystem.dto.AttendanceDTO;
@@ -17,18 +16,21 @@ import com.example.studsystem.models.Attendance;
 import com.example.studsystem.models.Student;
 import com.example.studsystem.models.Subject;
 import com.example.studsystem.repo.AttendanceRepository;
-import com.example.studsystem.repo.SubjectRepository;
 
 @Service
 public class AttendanceService {
-    @Autowired
-    private AttendanceRepository attendanceRepository;
-    
-    @Autowired
-    private StudentService studentService;
-    
-    @Autowired
-    private SubjectService subjectService;
+    private final AttendanceRepository attendanceRepository;
+    private final StudentService studentService;
+    private final SubjectService subjectService;
+
+    public AttendanceService(
+            AttendanceRepository attendanceRepository,
+            StudentService studentService,
+            SubjectService subjectService) {
+        this.attendanceRepository = attendanceRepository;
+        this.studentService = studentService;
+        this.subjectService = subjectService;
+    }
 
     public List<AttendanceDTO> getAttendanceBySubjectAndDate(Long subjectId, LocalDate date) throws NotFoundException {
         List<Attendance> attendances = attendanceRepository.findBySubjectIdAndDate(subjectId, date);

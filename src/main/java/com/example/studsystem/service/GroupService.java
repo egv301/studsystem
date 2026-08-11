@@ -2,7 +2,6 @@ package com.example.studsystem.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.studsystem.dto.GroupDTO;
@@ -13,8 +12,11 @@ import com.example.studsystem.repo.GroupRepository;
 
 @Service
 public class GroupService {
-	@Autowired
-	GroupRepository groupRepository;
+    private final GroupRepository groupRepository;
+
+    public GroupService(GroupRepository groupRepository) {
+        this.groupRepository = groupRepository;
+    }
 	
 	public List<Group> groupList(){
 		List<Group> groupList = groupRepository.findAll();
@@ -48,7 +50,7 @@ public class GroupService {
     }
     
     public void deleteGroup(Long group_id) throws NotFoundException {
-    	Group group = groupRepository.findById(group_id).orElseThrow(()->new NotFoundException("Group was not found"));
+        groupRepository.findById(group_id).orElseThrow(()->new NotFoundException("Group was not found"));
     	groupRepository.deleteById(group_id);
     }
 }

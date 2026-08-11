@@ -46,7 +46,7 @@ public class SubjectAssignmentDTO {
 		return subject;
 	}
 
-	public void setSubject_id(Long subject) {
+	public void setSubject(Long subject) {
 		this.subject = subject;
 	}
 }

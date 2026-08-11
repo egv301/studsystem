@@ -3,7 +3,6 @@ package com.example.studsystem.service;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.studsystem.dto.ShowStudentSubjectDTO;
@@ -13,18 +12,22 @@ import com.example.studsystem.exceptions.NotFoundException;
 import com.example.studsystem.models.Student;
 import com.example.studsystem.models.Subject;
 import com.example.studsystem.repo.StudentRepository;
-import com.example.studsystem.repo.SubjectRepository;
 
 @Service
 public class StudentSubjectService {
-	@Autowired
-	StudentService studentService;
-	@Autowired
-	SubjectService subjectService;
-	@Autowired
-	StudentRepository studentRepository;
-	@Autowired
-	SubjectRepository subjectRepository;
+    private final StudentService studentService;
+    private final SubjectService subjectService;
+    private final StudentRepository studentRepository;
+
+    public StudentSubjectService(
+            StudentService studentService,
+            SubjectService subjectService,
+            StudentRepository studentRepository) {
+        this.studentService = studentService;
+        this.subjectService = subjectService;
+        this.studentRepository = studentRepository;
+    }
+
 	public ShowStudentSubjectDTO checkStudentsSubject(Long student_id) throws NotFoundException {
 		ShowStudentSubjectDTO showStudentSubjectDTO = new ShowStudentSubjectDTO();
 		List<Subject> subjectList = subjectService.getSubjectList();

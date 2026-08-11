@@ -3,7 +3,6 @@ package com.example.studsystem.config;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,8 +18,11 @@ import com.example.studsystem.utils.JwtTokenUtils;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-	@Autowired
-    private JwtTokenUtils jwtTokenUtils;
+    private final JwtTokenUtils jwtTokenUtils;
+
+    public JwtRequestFilter(JwtTokenUtils jwtTokenUtils) {
+        this.jwtTokenUtils = jwtTokenUtils;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -32,9 +34,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtTokenUtils.getUsername(jwt);
             } catch (ExpiredJwtException e) {
-            	System.out.println("Token expired");
+                logger.warn("Token expired");
             } catch (SignatureException e) {
-            	System.out.println("Incorrent sign");
+                logger.warn("Incorrect token signature");
             }
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

@@ -1,20 +1,12 @@
 package com.example.studsystem.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.studsystem.dto.JwtRequestDTO;
 import com.example.studsystem.dto.JwtResponseDTO;
@@ -25,19 +17,24 @@ import com.example.studsystem.models.User;
 import com.example.studsystem.utils.JwtTokenUtils;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
-	@Autowired
-    private UserService userService;
-	@Autowired
-    private JwtTokenUtils jwtTokenUtils;
-	@Autowired
-    private AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final JwtTokenUtils jwtTokenUtils;
+    private final AuthenticationManager authenticationManager;
 
-    public ResponseEntity<?> createAuthToken(@RequestBody JwtRequestDTO authRequest) {
+    public AuthService(
+            UserService userService,
+            JwtTokenUtils jwtTokenUtils,
+            AuthenticationManager authenticationManager) {
+        this.userService = userService;
+        this.jwtTokenUtils = jwtTokenUtils;
+        this.authenticationManager = authenticationManager;
+    }
+
+    public ResponseEntity<?> createAuthToken(JwtRequestDTO authRequest) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         } catch (BadCredentialsException e) {
@@ -50,7 +47,7 @@ public class AuthService {
         return ResponseEntity.ok(new JwtResponseDTO(roles.get(0),token));
     }
 
-    public ResponseEntity<?> createNewUser(@RequestBody RegistrationUserDTO registrationUserDto) {
+    public ResponseEntity<?> createNewUser(RegistrationUserDTO registrationUserDto) {
         if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Passwords do not match"), HttpStatus.BAD_REQUEST);
         }

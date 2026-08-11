@@ -4,34 +4,32 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.studsystem.dto.GroupDTO;
 import com.example.studsystem.dto.StudentDTO;
 import com.example.studsystem.dto.StudentForUpdateDTO;
 import com.example.studsystem.dto.StudentSubjectDTO;
-import com.example.studsystem.dto.SubjectDTO;
-import com.example.studsystem.dto.SubjectForUpdateDTO;
-import com.example.studsystem.dto.TeacherDTO;
 import com.example.studsystem.exceptions.NotFoundException;
 import com.example.studsystem.models.Group;
 import com.example.studsystem.models.Student;
 import com.example.studsystem.models.Subject;
-import com.example.studsystem.models.User;
 import com.example.studsystem.repo.StudentRepository;
-import com.example.studsystem.repo.SubjectRepository;
 
 @Service
 public class StudentService{
-	@Autowired
-	StudentRepository studentRepository;
-	
-	@Autowired
-	SubjectService subjectService;
-	
-	@Autowired
-	GroupService groupService;
+    private final StudentRepository studentRepository;
+    private final SubjectService subjectService;
+    private final GroupService groupService;
+
+    public StudentService(
+            StudentRepository studentRepository,
+            SubjectService subjectService,
+            GroupService groupService) {
+        this.studentRepository = studentRepository;
+        this.subjectService = subjectService;
+        this.groupService = groupService;
+    }
 	
     public void addStudent(StudentDTO studentObj) throws NotFoundException {
     	Group group = groupService.getGroup(studentObj.getGroup());
@@ -95,8 +93,8 @@ public class StudentService{
     }
     
     public void deleteStudent(Long student_id) throws NotFoundException {
-    	Student student = studentRepository.findById(student_id).orElseThrow(()->new NotFoundException("Student not found"));
-    	studentRepository.deleteById(student_id);;
+        studentRepository.findById(student_id).orElseThrow(()->new NotFoundException("Student not found"));
+        studentRepository.deleteById(student_id);
     }
     
     public void addSubject(Long student_id,StudentSubjectDTO studentSubjectDto) throws NotFoundException {

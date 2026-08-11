@@ -3,7 +3,6 @@ package com.example.studsystem.controller;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +20,11 @@ import com.example.studsystem.service.AttendanceService;
 @RestController
 @RequestMapping("/api/teacher")
 public class AttendanceController {
-	@Autowired
-	AttendanceService attendanceService;
+    private final AttendanceService attendanceService;
+
+    public AttendanceController(AttendanceService attendanceService) {
+        this.attendanceService = attendanceService;
+    }
 	
 	@GetMapping("/getAttendanceList/{subject_id}/{date}")
 	public ResponseEntity<List<AttendanceDTO>> getAttendanceList(

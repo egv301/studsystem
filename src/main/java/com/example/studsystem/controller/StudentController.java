@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,20 +19,17 @@ import com.example.studsystem.dto.GroupDTO;
 import com.example.studsystem.dto.StudentDTO;
 import com.example.studsystem.dto.StudentForUpdateDTO;
 import com.example.studsystem.exceptions.NotFoundException;
-import com.example.studsystem.exceptions.StudentExistsException;
-//import com.example.studsystem.models.Group;
 import com.example.studsystem.models.Student;
-import com.example.studsystem.service.GroupService;
 import com.example.studsystem.service.StudentService;
 
 @RestController
 @RequestMapping("/api/admin")
 public class StudentController {
-	@Autowired
-	StudentService studentService;
-	
-	@Autowired
-	GroupService groupService;
+    private final StudentService studentService;
+
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
+    }
 
 	@GetMapping("/student-list")
 	public ResponseEntity<List<StudentDTO>> studentList(){
@@ -61,13 +57,13 @@ public class StudentController {
 	}
 	
 	@PostMapping("/add-student")
-	public ResponseEntity<Student> addStudent(@RequestBody @Valid StudentDTO studentObj) throws StudentExistsException, NotFoundException{
+	public ResponseEntity<Student> addStudent(@RequestBody @Valid StudentDTO studentObj) throws NotFoundException{
 		studentService.addStudent(studentObj);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@PutMapping("/update-student")
-	public ResponseEntity<Student> updateStudent(@RequestBody @Valid StudentDTO studentObj) throws NotFoundException,StudentExistsException{
+	public ResponseEntity<Student> updateStudent(@RequestBody @Valid StudentDTO studentObj) throws NotFoundException{
 		studentService.updateStudent(studentObj);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

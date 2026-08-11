@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import com.example.studsystem.dto.GroupDTO;
@@ -16,8 +15,11 @@ import com.example.studsystem.service.GroupService;
 @RestController
 @RequestMapping("/api/admin")
 public class GroupController {
-	@Autowired
-	GroupService groupService;
+    private final GroupService groupService;
+
+    public GroupController(GroupService groupService) {
+        this.groupService = groupService;
+    }
 	
 	@GetMapping("/group-list")
 	public ResponseEntity<List<Group>> groupList(){
@@ -34,13 +36,11 @@ public class GroupController {
 	@PostMapping("/add-group")
 	public ResponseEntity<?> addGroup(@RequestBody @Valid GroupDTO groupObj) throws GroupExistsException{
 		groupService.addGroup(groupObj);
-		System.out.println(groupObj);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@PutMapping("/update-group")
 	public ResponseEntity<?> updateGroup(@RequestBody @Valid GroupDTO groupObj) throws NotFoundException,GroupExistsException{
-		System.out.println(groupObj);
 		groupService.updateGroup(groupObj);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
